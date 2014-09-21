@@ -1,0 +1,38 @@
+---
+title: "Presentation"
+author: "Nathan DeMaria"
+date: "Sunday, September 21, 2014"
+output: ioslides_presentation
+---
+
+## The App
+
+The purpose of the Shiny application is to make comparing fantasy football players easier. To do this, the application includes tabs for:
+
+- Comparing points scored by each player each week
+- Comparing total points scored last season
+- Running a t.test to compare the two point distributions
+
+## Sample Data
+The app takes parsed play by play data, and transforms it into the following format:
+```{r data}
+library(data.table)
+player_data <- fread('sample.csv')
+head(player_data)
+```
+
+## Sample Lines
+The following graph shows what the points per week tab will look like.  It is useful for comparing trends, especially to see how players fared toward the end of last season.
+```{r lines, echo=FALSE}
+suppressPackageStartupMessages(library(ggvis))
+library(knitr)
+p <- data.frame(player_data) %>% ggvis(~Week, ~points, stroke=~player) %>% layer_lines()
+p
+```
+
+## Sample t.test
+A t.test can be used to show the difference between two distributions.  The application will perform a t.test to determine if one player's points per game was significantly higher than another's last season.
+```{r ttest}
+t.test(player_data[player == 'P.Manning',]$points, player_data[player == 'R.Wilson',]$points)
+```
+
